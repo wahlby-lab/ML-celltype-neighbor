@@ -1,4 +1,4 @@
-# Machine learning for cell classification and neighborhood analysis in glioma tissue
+## Machine learning for cell classification and neighborhood analysis in glioma tissue
 
 This is the code repository for our manuscript (under review) available in [BioRxiv](https://www.biorxiv.org/content/10.1101/2021.02.26.433051v1)
 
@@ -6,7 +6,7 @@ The code shows how we preprocessed our data, how we created our neworks and how 
 
 The image data of the 21 cores is available upon reasonable request directly to the authors from the Department of Oncology-Pathology, Karolinska Institutet, Sweden. 
 
-1. Prerequisites
+# 1. Prerequisites
 
 We use several libraries, to be able to use all the methods in this pipeline. This is a list yo can put in a requirements.txt
 + numpy = "*"
@@ -40,3 +40,15 @@ You need your own multiplex immunofluorescence images and the formats. We intent
 
 You need to know which channels represent which markers. You need to understand a little bit about pandas dataframes, CSVs, JSON files
 
+# 2. Overview
+
+![overview image](https://github.com/wahlby-lab/celltypeneighbor/blob/bd5bf6ce4c0c76f64635d81aa5cb6d193fa84c7e/misc/overview.png)
+
+The overview shows an example of a piece of a core. Features are computed from each segmented cell, such as marker composition and our suggested d90s features. A vector containing these features is the input to an ensemble of FNNs. The output is a class for a cell. Once all cells have a class, we define the neighborhoods as cells being closer than a certain distance, we chose 90th percentile of the minimum distance between any two cells in our dataset. Any two cells at this distance will be connected by an edge and a graph is created which is inputed to a spage2vec (GNN) model to obtain a neighborhood descriptor. Of course both FNN and GNN have to be trained.
+
+In our code we preprocess both images and CSV files to obtain all features and create a dataframe that is used through the rest of the project.
+We also include a file fcnn.py which contains the model and the training procedures as we explained in the manuscript.
+
+The method spage2vec is found in this same lab at [wahlby-lab/spage2vec](https://github.com/wahlby-lab/spage2vec) which has many examples of training and inference and we adapted for our work.
+
+We include utilities for display and visualization.
