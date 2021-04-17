@@ -1,6 +1,6 @@
 ## Machine learning for cell classification and neighborhood analysis in glioma tissue
 
-This is the code repository for our manuscript (under review) available in [BioRxiv](https://www.biorxiv.org/content/10.1101/2021.02.26.433051v1)
+[![bioRxiv shield](https://img.shields.io/badge/bioRxiv-10.1101/2021.02.26.433051-red.svg)](https://www.biorxiv.org/content/10.1101/2021.02.26.433051v1)
 
 The code shows how we preprocessed our data, how we created our neworks and how we made use of them. However this is not intended as a generic pipeline. To use it in your own data you have to make the modifications. We distribute this code with a GNU GPLv3 license meaning you can use the code as long as you credit us. This code is provided without warranty. The authors or license can not be held liable for any damages inflicted by the code.
 
@@ -36,7 +36,7 @@ We use several libraries, to be able to use all the methods in this pipeline. Th
 + loompy = "==3.0.6"
 + jupyter-contrib-nbextensions = "*"
 
-You need your own multiplex immunofluorescence images and the formats. We intentionally separated cores into their own tiff files, but often the images come out of the microscope in their own formats, which is why we include libraries like python-bioformats.
+You need your own multiplex immunofluorescence (mIF) images and the formats. We intentionally separated cores into their own tiff files, but often the images come out of the microscope in their own formats, which is why we include libraries like python-bioformats.
 
 You need to know which channels represent which markers. You need to understand a little bit about pandas dataframes, CSVs, JSON files
 
@@ -52,3 +52,20 @@ We also include a file fcnn.py which contains the model and the training procedu
 The method spage2vec is found in this same lab at [wahlby-lab/spage2vec](https://github.com/wahlby-lab/spage2vec) which has many examples of training and inference and we adapted for our work.
 
 We include utilities for display and visualization.
+
+# 3. Specifics
+
+## 3.1 Nuclei segmentation
+So you have mIF images, what to do next?
+
+First you need to have a way to segment nuclei and get a polygon around each cell. Since our collaborators use [QuPath](https://qupath.github.io/) we decided to stick to it and we do the nuclei segmentation in it.
+
+By script this is done like so:
+
+```runPlugin('qupath.imagej.detect.cells.WatershedCellDetection', '{"detectionImage": "DAPI",  "requestedPixelSizeMicrons": 0.5,  "backgroundRadiusMicrons": 8.0,  "medianRadiusMicrons": 0.0,  "sigmaMicrons": 1.5,  "minAreaMicrons": 10.0,  "maxAreaMicrons": 400.0,  "threshold": 0.5,  "watershedPostProcess": true,  "cellExpansionMicrons": 2.5,  "includeNuclei": true,  "smoothBoundaries": true,  "makeMeasurements": true}')```
+
+You don't need to use QuPath if you don't want to, but for our next steps we will asume that it is used.
+
+QuPath offers a simple export where a CSV can be obtained with the measurements such as marker quantification and others. Custom quantifications are not avilable directly and the measurementes do not include the 90th percentile of a marker. So to obtain the 90th percentile, we want to have the polygon so we can look in the image ourselves. For this we created the script `exportcellstojson.groovy`
+
+In the notebook ``
