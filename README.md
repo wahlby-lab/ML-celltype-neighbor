@@ -55,7 +55,7 @@ We include utilities for display and visualization.
 
 # 3. Specifics
 
-## 3.1 Nuclei segmentation
+## Nuclei segmentation
 So you have mIF images, what to do next?
 
 First you need to have a way to segment nuclei and get a polygon around each cell. Since our collaborators use [QuPath](https://qupath.github.io/) we decided to stick to it and we do the nuclei segmentation in it.
@@ -68,4 +68,19 @@ You don't need to use QuPath if you don't want to, but for our next steps we wil
 
 QuPath offers a simple export where a CSV can be obtained with the measurements such as marker quantification and others. Custom quantifications are not avilable directly and the measurementes do not include the 90th percentile of a marker. So to obtain the 90th percentile, we want to have the polygon so we can look in the image ourselves. For this we created the script `exportcellstojson.groovy`
 
-In the notebook ``
+## Preparing the data 
+In the notebook [``1-MakeMainDataFrame.ipynb``](https://github.com/wahlby-lab/ML-celltype-neighbor/blob/main/1-MakeMainDataFrame.ipynb) we create all the segmented nuclei as images with all their channels and compute the D90s
+
+## Training and using the CNN
+
+In the python file [``2-useFCNN.py ``](https://github.com/wahlby-lab/ML-celltype-neighbor/blob/main/2-useFCNN.py) you can train a network ensemble and then use it with [``3-UseNewFCNNensemble.ipynb ``](https://github.com/wahlby-lab/ML-celltype-neighbor/blob/main/3-UseNewFCNNensemble.ipynb).
+
+## Plotting and utilities
+
+The file utils.py  contains functions we created to plot from a pandas data frame and also to do color conversions and create palettes of N different colors which comes in handy when you have N clusters to show.
+
+## Spage2vec
+
+Coming soon. We refer you to the [original work of spage2vec in our lab](https://github.com/wahlby-lab/spage2vec). We simply cloned the notebooks and adapted them
+
+
